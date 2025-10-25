@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard — AI Finance</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <main class="container">
+    <nav class="topnav">
+      <a href="index.html">Home</a>
+      <a href="profile.html">Profile</a>
+      <a href="chat.html">Chat</a>
+    </nav>
+
+    <section class="card">
+      <h2>Your Dashboard</h2>
+      <div id="profileCard" class="muted">No profile yet. Go to Profile to create one.</div>
+
+      <div id="analytics" style="display:none;margin-top:12px">
+        <div class="stat-row">
+          <div class="stat">
+            <div class="muted">Risk Score</div>
+            <div id="riskScore">—</div>
+          </div>
+          <div class="stat">
+            <div class="muted">Allocation</div>
+            <div id="allocation">—</div>
+          </div>
+          <div class="stat">
+            <div class="muted">Projected</div>
+            <div id="projected">—</div>
+          </div>
+        </div>
+
+        <h4>Recommended Portfolio</h4>
+        <div id="portfolioList"></div>
+      </div>
+
+      <div style="margin-top:14px">
+        <button id="editProfile">Edit Profile</button>
+        <button id="connectHuman">Connect Human Advisor</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/dashboard.js"></script>
+</body>
+</html>

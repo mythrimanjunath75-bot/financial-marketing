@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Create Profile — AI Finance</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <main class="container">
+    <nav class="topnav">
+      <a href="index.html">Home</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="chat.html">Chat</a>
+    </nav>
+
+    <section class="card">
+      <h2>Create Your Profile</h2>
+      <form id="profileForm">
+        <label>
+          Full name
+          <input id="name" required />
+        </label>
+
+        <label>
+          Age
+          <input id="age" type="number" min="1" max="120" required />
+        </label>
+
+        <label id="incomeLabel">
+          Monthly Income (₹)
+          <input id="income" type="number" min="0" step="100" />
+          <small class="muted">Max allowed: ₹1,00,00,000 (1 crore)</small>
+        </label>
+
+        <label>
+          Savings (₹)
+          <input id="savings" type="number" min="0" step="100" />
+        </label>
+
+        <label>
+          Investment Amount (₹)
+          <input id="invest" type="number" min="0" step="100" />
+        </label>
+
+        <label>
+          Investment Horizon (years)
+          <select id="horizon">
+            <option value="1">1</option>
+            <option value="3">3</option>
+            <option value="5" selected>5</option>
+            <option value="10">10</option>
+          </select>
+        </label>
+
+        <label>
+          Risk Appetite
+          <select id="risk">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+          </select>
+        </label>
+
+        <div class="actions">
+          <button type="submit" class="primary">Save Profile & Continue</button>
+          <button type="button" id="demoBtn">Fill Demo</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/profile.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AI Financial Marketing — Start</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <main class="container">
+    <header class="hero">
+      <h1>Financial Marketing using AI</h1>
+      <p class="muted">Affordable. Personalized. Scalable. Transform how people begin their financial journeys using AI-driven advice.</p>
+      <button id="startBtn" class="primary">Start your financial journey</button>
+    </header>
+
+    <section class="info card">
+      <h3>What you'll get</h3>
+      <ul>
+        <li>Create your profile (age rules and income limits applied)</li>
+        <li>Personalized dashboard & portfolio recommendation</li>
+        <li>AI assistant + option to connect humans</li>
+      </ul>
+    </section>
+  </main>
+
+  <script src="assets/js/main.js"></script>
+  <script>
+    document.getElementById('startBtn').addEventListener('click', () => {
+      // redirect to profile page (first-time flow)
+      window.location.href = 'profile.html';
+    });
+  </script>
+</body>
+</html>

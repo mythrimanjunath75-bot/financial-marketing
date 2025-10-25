@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}Stock Insights - AI Personal Finance{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="row mt-4">
+    <div class="col-12">
+        <h2 class="text-white mb-4">
+            <i class="bi bi-graph-up"></i> Stock Insights
+        </h2>
+    </div>
+</div>
+
+<!-- Search Form -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="mb-3"><i class="bi bi-search"></i> Search Stock</h5>
+                <form method="POST" action="{{ url_for('stock_insights') }}" class="row g-3">
+                    <div class="col-md-10">
+                        <input type="text" class="form-control form-control-lg" 
+                               name="symbol" placeholder="Enter stock symbol (e.g., AAPL, GOOGL, TSLA)" required>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <i class="bi bi-search"></i> Search
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if stock_data %}
+<!-- Stock Information -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h3 class="mb-1">{{ stock_data.symbol }}</h3>
+                        <p class="text-muted mb-0">{{ stock_data.company_name }}</p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <h2 class="mb-1">${{ "%.2f"|format(stock_data.current_price) }}</h2>
+                        <span class="badge {% if stock_data.change >= 0 %}bg-success{% else %}bg-danger{% endif %} fs-6">
+                            {% if stock_data.change >= 0 %}+{% endif %}${{ "%.2f"|format(stock_data.change) }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if historical_data %}
+<!-- Price Chart -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="mb-3"><i class="bi bi-graph-up-arrow"></i> 30-Day Price Chart</h5>
+                <canvas id="priceChart" height="80"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('priceChart').getContext('2d');
+    const dates = {{ historical_data.dates | tojson }};
+    const prices = {{ historical_data.prices | tojson }};
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: dates,
+            datasets: [{
+                label: 'Price ($)',
+                data: prices,
+                borderColor: 'rgb(102, 126, 234)',
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value.toFixed(2);
+                        }
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+{% endif %}
+
+<!-- Analysis Section -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="mb-3"><i class="bi bi-lightbulb"></i> Quick Analysis</h5>
+                <div class="alert alert-info">
+                    <strong>Investment Tip:</strong> Always research thoroughly before investing. Consider the company's fundamentals, 
+                    market trends, and your risk tolerance. Diversification is key to a healthy portfolio.
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <h6>Key Considerations:</h6>
+                        <ul>
+                            <li>Review company financials and quarterly reports</li>
+                            <li>Check industry trends and competition</li>
+                            <li>Analyze historical performance patterns</li>
+                            <li>Consider economic indicators and market conditions</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Risk Management:</h6>
+                        <ul>
+                            <li>Don't invest more than you can afford to lose</li>
+                            <li>Set stop-loss orders to limit potential losses</li>
+                            <li>Diversify across different sectors</li>
+                            <li>Regularly review and rebalance your portfolio</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% elif request.method == 'POST' %}
+<!-- Error Message -->
+<div class="row">
+    <div class="col-12">
+        <div class="alert alert-danger">
+            <i class="bi bi-exclamation-triangle"></i> Unable to fetch data for this symbol. Please check the symbol and try again.
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

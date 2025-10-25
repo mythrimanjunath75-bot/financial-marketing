@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Register - AI Personal Finance{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body p-5">
+                <h2 class="text-center mb-4">
+                    <i class="bi bi-person-plus"></i> Create Your Account
+                </h2>
+                
+                {% if error %}
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle"></i> {{ error }}
+                </div>
+                {% endif %}
+                
+                <form method="POST" action="{{ url_for('register') }}">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required minlength="6">
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="age" class="form-label">Age</label>
+                            <input type="number" class="form-control" id="age" name="age" min="18" max="120">
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="risk_level" class="form-label">Risk Level</label>
+                            <select class="form-select" id="risk_level" name="risk_level">
+                                <option value="conservative">Conservative</option>
+                                <option value="moderate" selected>Moderate</option>
+                                <option value="aggressive">Aggressive</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="income" class="form-label">Monthly Income ($)</label>
+                        <input type="number" class="form-control" id="income" name="income" step="0.01" min="0">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="savings" class="form-label">Total Savings ($)</label>
+                        <input type="number" class="form-control" id="savings" name="savings" step="0.01" min="0">
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="debt" class="form-label">Total Debt ($)</label>
+                        <input type="number" class="form-control" id="debt" name="debt" step="0.01" min="0">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-check-circle"></i> Register
+                    </button>
+                </form>
+                
+                <p class="text-center mt-4 mb-0">
+                    Already have an account? <a href="{{ url_for('login') }}">Login here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
