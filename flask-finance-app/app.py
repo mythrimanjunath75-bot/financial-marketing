@@ -57,23 +57,31 @@ def sitemap():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    """User registration"""
+    """User registration - Always a fresh page for new users"""
+    # Clear any existing session to ensure fresh start
+    if 'user_id' in session:
+        session.clear()
+    
     if request.method == 'POST':
         try:
-            name = request.form.get('name')
-            email = request.form.get('email')
-            password = request.form.get('password')
+            name = request.form.get('name', '').strip()
+            email = request.form.get('email', '').strip()
+            password = request.form.get('password', '').strip()
             
             # Validate required fields
             if not name or not email or not password:
                 return render_template('register.html', error='Name, email, and password are required')
+            
+            # Validate password length
+            if len(password) < 6:
+                return render_template('register.html', error='Password must be at least 6 characters')
             
             # Get optional fields with defaults
             age = request.form.get('age', type=int) or None
             income = request.form.get('income', type=float) or 0.0
             savings = request.form.get('savings', type=float) or 0.0
             debt = request.form.get('debt', type=float) or 0.0
-            risk_level = request.form.get('risk_level') or 'moderate'
+            risk_level = request.form.get('risk_level', 'moderate')
             
             hashed_password = generate_password_hash(password)
             
@@ -85,21 +93,27 @@ def register():
             ''', (name, email, hashed_password, age, income, savings, debt, risk_level))
             conn.commit()
             conn.close()
-            return redirect(url_for('login'))
+            
+            # Success message and redirect
+            return redirect(url_for('login', registered='true'))
         except sqlite3.IntegrityError:
-            return render_template('register.html', error='Email already exists')
+            return render_template('register.html', error='Email already exists. Please use a different email or login.')
         except Exception as e:
             print(f"Registration error: {str(e)}")
-            return render_template('register.html', error=f'Registration failed. Please check all fields.')
+            return render_template('register.html', error='Registration failed. Please check all fields and try again.')
     
+    # GET request - show fresh empty form
     return render_template('register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     """User login"""
     if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '').strip()
+        
+        if not email or not password:
+            return render_template('login.html', error='Email and password are required')
         
         conn = get_db()
         cursor = conn.cursor()
@@ -108,13 +122,19 @@ def login():
         conn.close()
         
         if user and check_password_hash(user['password'], password):
+            session.clear()  # Clear any old session data
             session['user_id'] = user['id']
             session['user_name'] = user['name']
             return redirect(url_for('dashboard'))
         else:
             return render_template('login.html', error='Invalid email or password')
     
-    return render_template('login.html')
+    # Check if user just registered
+    success_msg = None
+    if request.args.get('registered') == 'true':
+        success_msg = 'Registration successful! Please login with your credentials.'
+    
+    return render_template('login.html', success=success_msg)
 
 @app.route('/logout')
 def logout():
