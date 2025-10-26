@@ -44,6 +44,11 @@ def home():
     """Home page"""
     return render_template('home.html')
 
+@app.route('/sitemap')
+def sitemap():
+    """Site map page showing all pages and navigation"""
+    return render_template('sitemap.html')
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     """User registration"""
