@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+
+{% block title %}Human Advisors - AI Personal Finance{% endblock %}
+
+{% block content %}
+<div class="row mt-4">
+    <div class="col-12">
+        <h2 class="text-white mb-4">
+            <i class="bi bi-people"></i> Connect with Human Financial Advisors
+        </h2>
+        <p class="text-white lead">Get personalized advice from certified financial experts - 100% FREE!</p>
+    </div>
+</div>
+
+{% if success %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i> <strong>Request Submitted Successfully!</strong> 
+            Our team of financial advisors will review your request and contact you within 24-48 hours.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Benefits Section -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-person-check fs-1 text-success mb-3"></i>
+                <h5>Certified Experts</h5>
+                <p class="text-muted">Work with licensed financial advisors with years of experience</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-cash-coin fs-1 text-primary mb-3"></i>
+                <h5>100% Free</h5>
+                <p class="text-muted">No hidden fees, no obligations - completely free consultation</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-shield-check fs-1 text-info mb-3"></i>
+                <h5>Confidential</h5>
+                <p class="text-muted">Your financial information is secure and never shared</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Request Form -->
+<div class="row mb-4">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-body p-4">
+                <h4 class="mb-4"><i class="bi bi-calendar-check"></i> Request Free Consultation</h4>
+                
+                <form method="POST" action="{{ url_for('human_advisors') }}">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="name" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="name" name="name" 
+                                   value="{{ user['name'] if user else '' }}" required>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   value="{{ user['email'] if user else '' }}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="phone" class="form-label">Phone Number (Optional)</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" 
+                                   placeholder="+1 (555) 123-4567">
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="topic" class="form-label">Consultation Topic</label>
+                            <select class="form-select" id="topic" name="topic" required>
+                                <option value="">Select a topic...</option>
+                                <option value="retirement">Retirement Planning</option>
+                                <option value="investment">Investment Strategy</option>
+                                <option value="debt">Debt Management</option>
+                                <option value="budgeting">Budget & Savings</option>
+                                <option value="tax">Tax Planning</option>
+                                <option value="estate">Estate Planning</option>
+                                <option value="insurance">Insurance & Risk</option>
+                                <option value="general">General Financial Advice</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Your Question/Message</label>
+                        <textarea class="form-control" id="message" name="message" rows="5" 
+                                  placeholder="Please describe your financial situation and what you'd like help with..." required></textarea>
+                        <small class="text-muted">Be as detailed as possible to help our advisors prepare for your consultation</small>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="preferred_time" class="form-label">Preferred Contact Time</label>
+                        <select class="form-select" id="preferred_time" name="preferred_time">
+                            <option value="morning">Morning (9 AM - 12 PM)</option>
+                            <option value="afternoon">Afternoon (12 PM - 5 PM)</option>
+                            <option value="evening">Evening (5 PM - 8 PM)</option>
+                            <option value="anytime">Anytime</option>
+                        </select>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-send"></i> Submit Consultation Request
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Info Sidebar -->
+    <div class="col-lg-4">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5><i class="bi bi-clock-history"></i> What to Expect</h5>
+                <ul class="list-unstyled mt-3">
+                    <li class="mb-2">
+                        <i class="bi bi-check-circle text-success"></i> Response within 24-48 hours
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-check-circle text-success"></i> 30-minute free consultation call
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-check-circle text-success"></i> Personalized action plan
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-check-circle text-success"></i> Follow-up resources
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <h5><i class="bi bi-info-circle"></i> Our Advisors</h5>
+                <p class="mt-3 mb-2"><strong>Certified Professionals</strong></p>
+                <p class="text-muted small">CFP®, CFA®, and CPA certified advisors</p>
+                
+                <p class="mb-2"><strong>10+ Years Experience</strong></p>
+                <p class="text-muted small">Expertise in personal finance, investments, and retirement</p>
+                
+                <p class="mb-2"><strong>Fiduciary Duty</strong></p>
+                <p class="text-muted small">Always acting in your best interest</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Request History -->
+{% if requests_history %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="mb-4"><i class="bi bi-clock-history"></i> Your Consultation History</h5>
+                
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Topic</th>
+                                <th>Message</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for req in requests_history %}
+                            <tr>
+                                <td>{{ req['created_at'][:10] }}</td>
+                                <td>
+                                    <span class="badge bg-secondary">{{ req['topic']|capitalize }}</span>
+                                </td>
+                                <td>{{ req['message'][:80] }}{% if req['message']|length > 80 %}...{% endif %}</td>
+                                <td>
+                                    {% if req['status'] == 'pending' %}
+                                        <span class="badge bg-warning">Pending</span>
+                                    {% elif req['status'] == 'completed' %}
+                                        <span class="badge bg-success">Completed</span>
+                                    {% else %}
+                                        <span class="badge bg-info">In Progress</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- FAQ Section -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="mb-4"><i class="bi bi-question-circle"></i> Frequently Asked Questions</h5>
+                
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                Is this really free?
+                            </button>
+                        </h2>
+                        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Yes! Our initial consultation is completely free with no strings attached. 
+                                We believe everyone deserves access to quality financial advice.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                How quickly will I hear back?
+                            </button>
+                        </h2>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Our team typically responds within 24-48 hours during business days. 
+                                You'll receive an email confirmation and a call to schedule your consultation.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                What should I prepare for the consultation?
+                            </button>
+                        </h2>
+                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Have a general idea of your financial goals, income, debts, and any specific questions. 
+                                Don't worry - our advisors will guide you through the conversation.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

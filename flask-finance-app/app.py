@@ -294,5 +294,51 @@ def generate_financial_advice(message):
     else:
         return "I'm here to help with your financial questions! Ask me about savings, investing, budgeting, debt management, or retirement planning. For personalized advice, please consult with a certified financial advisor."
 
+@app.route('/human-advisors', methods=['GET', 'POST'])
+def human_advisors():
+    """Human financial advisors - free consultation"""
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    if request.method == 'POST':
+        # Get user info
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM users WHERE id = ?', (session['user_id'],))
+        user = cursor.fetchone()
+        
+        # Save advisor request
+        name = request.form.get('name', user['name'])
+        email = request.form.get('email', user['email'])
+        phone = request.form.get('phone')
+        topic = request.form.get('topic')
+        message = request.form.get('message')
+        preferred_time = request.form.get('preferred_time')
+        
+        cursor.execute('''
+            INSERT INTO advisor_requests (user_id, name, email, phone, topic, message, preferred_time)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        ''', (session['user_id'], name, email, phone, topic, message, preferred_time))
+        conn.commit()
+        conn.close()
+        
+        return render_template('advisors.html', success=True)
+    
+    # Get user's previous requests
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM users WHERE id = ?', (session['user_id'],))
+    user = cursor.fetchone()
+    
+    cursor.execute('''
+        SELECT * FROM advisor_requests 
+        WHERE user_id = ? 
+        ORDER BY created_at DESC
+    ''', (session['user_id'],))
+    requests_history = cursor.fetchall()
+    conn.close()
+    
+    return render_template('advisors.html', user=user, requests_history=requests_history)
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

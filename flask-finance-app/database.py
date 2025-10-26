@@ -55,6 +55,23 @@ def init_db():
         )
     ''')
     
+    # Advisor requests table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS advisor_requests (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            name TEXT NOT NULL,
+            email TEXT NOT NULL,
+            phone TEXT,
+            topic TEXT NOT NULL,
+            message TEXT NOT NULL,
+            preferred_time TEXT,
+            status TEXT DEFAULT 'pending',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users (id)
+        )
+    ''')
+    
     conn.commit()
     conn.close()
     print("Database initialized successfully!")
