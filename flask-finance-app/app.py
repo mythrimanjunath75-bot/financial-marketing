@@ -230,6 +230,20 @@ def delete_holding(id):
     
     return redirect(url_for('portfolio'))
 
+@app.route('/portfolio/clear-all')
+def clear_portfolio():
+    """Clear all holdings for current user"""
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM portfolio WHERE user_id = ?', (session['user_id'],))
+    conn.commit()
+    conn.close()
+    
+    return redirect(url_for('portfolio'))
+
 @app.route('/stock-insights', methods=['GET', 'POST'])
 def stock_insights():
     """Stock insights and real-time data"""
