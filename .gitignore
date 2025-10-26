@@ -28,7 +28,7 @@ instance/
 .webassets-cache
 
 # Database
-*.db
+# *.db  # Commented out to include database files
 *.sqlite
 *.sqlite3
 
