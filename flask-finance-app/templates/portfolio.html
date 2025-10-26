@@ -11,6 +11,18 @@
     </div>
 </div>
 
+<!-- Info Alert -->
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <i class="bi bi-info-circle"></i> <strong>Note:</strong> Portfolio prices are fetched in real-time from Yahoo Finance. 
+            If a stock shows <span class="badge bg-warning text-dark"><i class="bi bi-exclamation-triangle"></i></span>, 
+            it means real-time data is temporarily unavailable and the purchase price is used as an estimate.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+</div>
+
 <!-- Portfolio Summary Cards -->
 <div class="row g-4 mb-4">
     <div class="col-md-4">
@@ -98,10 +110,22 @@
                         <tbody>
                             {% for stock in portfolio %}
                             <tr>
-                                <td><strong>{{ stock.symbol }}</strong></td>
+                                <td>
+                                    <strong>{{ stock.symbol }}</strong>
+                                    {% if not stock.data_available %}
+                                    <span class="badge bg-warning text-dark ms-1" title="Real-time data unavailable">
+                                        <i class="bi bi-exclamation-triangle"></i>
+                                    </span>
+                                    {% endif %}
+                                </td>
                                 <td>{{ stock.quantity }}</td>
                                 <td>${{ stock.purchase_price }}</td>
-                                <td>${{ stock.current_price }}</td>
+                                <td>
+                                    ${{ stock.current_price }}
+                                    {% if not stock.data_available %}
+                                    <small class="text-muted">(est.)</small>
+                                    {% endif %}
+                                </td>
                                 <td>${{ stock.investment }}</td>
                                 <td>${{ stock.current_value }}</td>
                                 <td class="{% if stock.profit_loss >= 0 %}text-success{% else %}text-danger{% endif %}">

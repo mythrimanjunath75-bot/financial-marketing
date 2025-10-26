@@ -28,14 +28,20 @@ def get_stock_data(symbol):
     try:
         stock = yf.Ticker(symbol)
         data = stock.history(period='1d')
+        
+        if data.empty:
+            print(f"Warning: No data returned for symbol {symbol}")
+            return None
+            
         info = stock.info
         return {
             'symbol': symbol,
-            'current_price': data['Close'].iloc[-1] if not data.empty else 0,
+            'current_price': data['Close'].iloc[-1],
             'company_name': info.get('longName', symbol),
-            'change': data['Close'].iloc[-1] - data['Open'].iloc[-1] if not data.empty else 0
+            'change': data['Close'].iloc[-1] - data['Open'].iloc[-1]
         }
     except Exception as e:
+        print(f"Error fetching data for {symbol}: {str(e)}")
         return None
 
 # Routes
@@ -173,28 +179,35 @@ def portfolio():
     
     for holding in holdings:
         stock_data = get_stock_data(holding['symbol'])
-        if stock_data:
+        
+        # Use fetched price or fallback to purchase price if API fails
+        if stock_data and stock_data['current_price'] > 0:
             current_price = stock_data['current_price']
-            investment = holding['quantity'] * holding['purchase_price']
-            current_value = holding['quantity'] * current_price
-            profit_loss = current_value - investment
-            profit_loss_pct = (profit_loss / investment) * 100 if investment > 0 else 0
-            
-            portfolio_data.append({
-                'id': holding['id'],
-                'symbol': holding['symbol'],
-                'quantity': holding['quantity'],
-                'purchase_price': holding['purchase_price'],
-                'purchase_date': holding['purchase_date'],
-                'current_price': round(current_price, 2),
-                'investment': round(investment, 2),
-                'current_value': round(current_value, 2),
-                'profit_loss': round(profit_loss, 2),
-                'profit_loss_pct': round(profit_loss_pct, 2)
-            })
-            
-            total_investment += investment
-            total_current_value += current_value
+        else:
+            # If stock data fetch fails, use purchase price as fallback
+            current_price = holding['purchase_price']
+        
+        investment = holding['quantity'] * holding['purchase_price']
+        current_value = holding['quantity'] * current_price
+        profit_loss = current_value - investment
+        profit_loss_pct = (profit_loss / investment) * 100 if investment > 0 else 0
+        
+        portfolio_data.append({
+            'id': holding['id'],
+            'symbol': holding['symbol'],
+            'quantity': holding['quantity'],
+            'purchase_price': holding['purchase_price'],
+            'purchase_date': holding['purchase_date'],
+            'current_price': round(current_price, 2),
+            'investment': round(investment, 2),
+            'current_value': round(current_value, 2),
+            'profit_loss': round(profit_loss, 2),
+            'profit_loss_pct': round(profit_loss_pct, 2),
+            'data_available': stock_data is not None
+        })
+        
+        total_investment += investment
+        total_current_value += current_value
     
     total_profit_loss = total_current_value - total_investment
     
