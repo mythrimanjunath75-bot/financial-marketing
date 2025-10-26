@@ -36,12 +36,12 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="age" class="form-label">Age</label>
-                            <input type="number" class="form-control" id="age" name="age" min="18" max="120">
+                            <input type="number" class="form-control" id="age" name="age" min="18" max="120" placeholder="Optional">
                         </div>
                         
                         <div class="col-md-6 mb-3">
                             <label for="risk_level" class="form-label">Risk Level</label>
-                            <select class="form-select" id="risk_level" name="risk_level">
+                            <select class="form-select" id="risk_level" name="risk_level" required>
                                 <option value="conservative">Conservative</option>
                                 <option value="moderate" selected>Moderate</option>
                                 <option value="aggressive">Aggressive</option>
@@ -51,17 +51,17 @@
                     
                     <div class="mb-3">
                         <label for="income" class="form-label">Monthly Income ($)</label>
-                        <input type="number" class="form-control" id="income" name="income" step="0.01" min="0">
+                        <input type="number" class="form-control" id="income" name="income" step="0.01" min="0" required placeholder="Enter your monthly income">
                     </div>
                     
                     <div class="mb-3">
                         <label for="savings" class="form-label">Total Savings ($)</label>
-                        <input type="number" class="form-control" id="savings" name="savings" step="0.01" min="0">
+                        <input type="number" class="form-control" id="savings" name="savings" step="0.01" min="0" required placeholder="Enter your total savings">
                     </div>
                     
                     <div class="mb-4">
                         <label for="debt" class="form-label">Total Debt ($)</label>
-                        <input type="number" class="form-control" id="debt" name="debt" step="0.01" min="0">
+                        <input type="number" class="form-control" id="debt" name="debt" step="0.01" min="0" required placeholder="Enter your total debt (or 0)">
                     </div>
                     
                     <button type="submit" class="btn btn-primary w-100">

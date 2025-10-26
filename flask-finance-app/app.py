@@ -59,18 +59,24 @@ def sitemap():
 def register():
     """User registration"""
     if request.method == 'POST':
-        name = request.form.get('name')
-        email = request.form.get('email')
-        password = request.form.get('password')
-        age = request.form.get('age', type=int)
-        income = request.form.get('income', type=float)
-        savings = request.form.get('savings', type=float)
-        debt = request.form.get('debt', type=float)
-        risk_level = request.form.get('risk_level')
-        
-        hashed_password = generate_password_hash(password)
-        
         try:
+            name = request.form.get('name')
+            email = request.form.get('email')
+            password = request.form.get('password')
+            
+            # Validate required fields
+            if not name or not email or not password:
+                return render_template('register.html', error='Name, email, and password are required')
+            
+            # Get optional fields with defaults
+            age = request.form.get('age', type=int) or None
+            income = request.form.get('income', type=float) or 0.0
+            savings = request.form.get('savings', type=float) or 0.0
+            debt = request.form.get('debt', type=float) or 0.0
+            risk_level = request.form.get('risk_level') or 'moderate'
+            
+            hashed_password = generate_password_hash(password)
+            
             conn = get_db()
             cursor = conn.cursor()
             cursor.execute('''
@@ -82,6 +88,9 @@ def register():
             return redirect(url_for('login'))
         except sqlite3.IntegrityError:
             return render_template('register.html', error='Email already exists')
+        except Exception as e:
+            print(f"Registration error: {str(e)}")
+            return render_template('register.html', error=f'Registration failed. Please check all fields.')
     
     return render_template('register.html')
 
