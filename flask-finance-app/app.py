@@ -22,6 +22,83 @@ def calculate_financial_health(income, savings, debt):
     score = ((savings - debt) / income) * 100
     return max(0, min(100, score))  # Keep score between 0-100
 
+# Helper function: Calculate Goal Projection
+def calculate_goal_projection(current_portfolio_value, monthly_income, total_savings):
+    """Calculate when user will reach financial goals"""
+    import datetime
+    
+    # Define financial milestones
+    milestones = [
+        {'name': 'Emergency Fund', 'amount': monthly_income * 6, 'description': '6 months of expenses'},
+        {'name': 'Down Payment', 'amount': 50000, 'description': 'House down payment'},
+        {'name': 'Retirement Starter', 'amount': 100000, 'description': 'First $100K invested'},
+        {'name': 'Financial Freedom', 'amount': monthly_income * 12 * 25, 'description': '25x annual income'},
+    ]
+    
+    # Investment assumptions
+    annual_return_rate = 0.08  # 8% average annual return
+    monthly_contribution = monthly_income * 0.10  # Assume 10% of income invested monthly
+    
+    # Calculate total available for investment
+    starting_value = current_portfolio_value + (total_savings * 0.5)  # 50% of savings invested
+    
+    projections = []
+    current_year = datetime.datetime.now().year
+    
+    for milestone in milestones:
+        if starting_value >= milestone['amount']:
+            # Already achieved
+            years_to_goal = 0
+            target_year = current_year
+            status = 'achieved'
+        else:
+            # Calculate years to reach goal
+            # Using compound interest formula with monthly contributions
+            goal_amount = milestone['amount']
+            monthly_rate = annual_return_rate / 12
+            
+            # Future Value = PV(1+r)^n + PMT * [((1+r)^n - 1) / r]
+            # Solving for n (months)
+            if monthly_contribution > 0:
+                # Calculate months needed
+                months = 0
+                current_value = starting_value
+                
+                while current_value < goal_amount and months < 600:  # Max 50 years
+                    current_value = current_value * (1 + monthly_rate) + monthly_contribution
+                    months += 1
+                
+                years_to_goal = round(months / 12, 1)
+                target_year = current_year + int(years_to_goal)
+                status = 'projected'
+            else:
+                # No contributions, just growth
+                if starting_value > 0:
+                    years_to_goal = round((goal_amount / starting_value) ** (1 / annual_return_rate), 1)
+                    target_year = current_year + int(years_to_goal)
+                    status = 'projected'
+                else:
+                    years_to_goal = None
+                    target_year = None
+                    status = 'need_investment'
+        
+        projections.append({
+            'name': milestone['name'],
+            'description': milestone['description'],
+            'amount': milestone['amount'],
+            'years_to_goal': years_to_goal,
+            'target_year': target_year,
+            'status': status
+        })
+    
+    return {
+        'projections': projections,
+        'starting_value': round(starting_value, 2),
+        'monthly_contribution': round(monthly_contribution, 2),
+        'annual_return_rate': annual_return_rate * 100,
+        'current_year': current_year
+    }
+
 # Helper function: Get stock data
 def get_stock_data(symbol):
     """Fetch stock data using yfinance with improved error handling"""
@@ -271,10 +348,25 @@ def portfolio():
     
     total_profit_loss = total_current_value - total_investment
     
+    # Get user data for goal projection
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('SELECT income, savings FROM users WHERE id = ?', (session['user_id'],))
+    user_data = cursor.fetchone()
+    conn.close()
+    
+    # Calculate goal projection
+    goal_projection = calculate_goal_projection(
+        total_current_value, 
+        user_data['income'] if user_data else 0,
+        user_data['savings'] if user_data else 0
+    )
+    
     return render_template('portfolio.html', portfolio=portfolio_data, 
                           total_investment=round(total_investment, 2),
                           total_current_value=round(total_current_value, 2),
-                          total_profit_loss=round(total_profit_loss, 2))
+                          total_profit_loss=round(total_profit_loss, 2),
+                          goal_projection=goal_projection)
 
 @app.route('/portfolio/delete/<int:id>')
 def delete_holding(id):
